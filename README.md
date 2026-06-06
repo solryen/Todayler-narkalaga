@@ -1,33 +1,39 @@
-# Todayler Onboarding Standalone
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-Fully standalone Expo subproject for onboarding -> signup -> paywall.
+# Run and deploy your AI Studio app
 
-## What this is
-- Independent app runtime inside `onboarding-standalone/`
-- Real Supabase + RevenueCat integrations
-- Localhost runnable without using main app routes
+This contains everything you need to run your app locally.
 
-## Entry route
-- `/onboarding/role-picker`
-- default `/` redirects there
+View your app in AI Studio: https://ai.studio/apps/528ad4ee-ecb4-4c53-bee9-afb663e35c93
 
-## Setup
-1. `cd onboarding-standalone`
-2. `cp .env.example .env` and fill keys
-3. `npm install`
-4. `npm run web`
+## Run Locally
 
-## Scripts
-- `npm run start`
-- `npm run web`
-- `npm run typecheck`
+**Prerequisites:**  Node.js
 
-## Included source
-- `app/onboarding/*`
-- `app/paywall.tsx`
-- local minimal `app/(tabs)/index.tsx` completion screen
-- vendored `contexts`, `lib`, `data`, `components`, `constants`
 
-## Notes
-- This is a one-time snapshot and does not auto-sync with the main app.
-- Main app is untouched.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Set `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_SUPABASE_ADMIN_EMAIL` in [.env.local](.env.local)
+4. Run the app:
+   `npm run dev`
+
+## Auth flow
+
+- `/signup` now supports Supabase email/password sign in, sign up, and password reset.
+- The admin/editor account still has to match `VITE_SUPABASE_ADMIN_EMAIL` for article writes.
+- If password recovery is enabled in Supabase, the recovery link returns to `/signup?mode=recover` and lets the user set a new password.
+
+## Newsletter storage
+
+- The `/explore` newsletter form writes subscriber rows into a `newsletter_subscribers` table in Supabase.
+- It also starts a Supabase email magic-link flow so the email can become a real auth account after verification.
+- If Supabase env vars are missing, the form shows an error instead of crashing the page.
+
+## Article sync
+
+- The `/explore` article list reads published rows from `public.explore_articles` first, then falls back to the bundled seed articles.
+- The 8loop admin flow writes article changes through the `article-sync` Edge Function.
+- Realtime updates keep open `/explore` tabs in sync when new articles are added.
